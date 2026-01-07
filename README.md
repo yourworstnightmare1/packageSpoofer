@@ -25,4 +25,4 @@ Compile using the `default.sh` script in the root of packageSpoofer's folder, an
 `chmod` allows macOS to execute the file.
 
 # Compatibility
-packageSpoofer is able to run on macOS 12+ with an xterm-compatible terminal with shellscript installed. It may run on older versions, but they are untested.
+packageSpoofer GUI edition is able to run on devices with **macOS 14.6 or newer**. The CLI edition can run on devices with **macOS 10.13 or newer and requires an xterm-compatible terminal**.
