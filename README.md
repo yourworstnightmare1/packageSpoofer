@@ -10,10 +10,12 @@ packageSpoofer uses `plutil` to modify the contents of the app's `Info.plist` to
 
 # Features
 - Already implemented:
-- [x] Bundle with appUnblocker (before running packageSpoofer, appUnblocker will be used to bypass unknown developer setting)
+- [ ] Bundle with appUnblocker (before running packageSpoofer, appUnblocker will be used to bypass unknown developer setting)
 - [x] Fix binary crash (runs chmod on app before running to make sure app launches)
-- [x] Automatically hide the file from appearing in Finder (only available through Finder search)
-- to be implemented later on:
+- [x] Remove app frameworks
+- [ ] Change the bundle ID of packageSpoofer itself each time it is run
+- [x] GUI edition
+- [ ] Automatically hide the file from appearing in Finder (only available through Finder search)
 - [ ] Sign apps with Apple Developer ID (Requires network connection)
 - [ ] Generate package IDs every time the app is run (random 4/8/12 byte generated developer/app name string)
 
