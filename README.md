@@ -17,12 +17,5 @@ packageSpoofer uses `plutil` to modify the contents of the app's `Info.plist` to
 - [ ] Sign apps with Apple Developer ID (Requires network connection)
 - [ ] Generate package IDs every time the app is run (random 4/8/12 byte generated developer/app name string)
 
-# Compilation
-Compile using the `default.sh` script in the root of packageSpoofer's folder, and run it in a terminal using chmod:\
-\
-`chmod +x default.sh`\
-\
-`chmod` allows macOS to execute the file.
-
 # Compatibility
 packageSpoofer GUI edition is able to run on devices with **macOS 14.6 or newer**. The CLI edition can run on devices with **macOS 10.13 or newer and requires an xterm-compatible terminal**.
