@@ -9,15 +9,9 @@ packageSpoofer allows you to edit an application's `CFBundleIdentifier` and resi
 packageSpoofer uses `plutil` to modify the contents of the app's `Info.plist` to change the app's `CFBundleIdentifier`, as most provision profiles use the app's package name to block it from opening. Then once the package name is changed, we use `codesign` to resign the app with the new package name to allow macOS to launch the app.
 
 # Features
-- Already implemented:
-- [ ] Bundle with appUnblocker (before running packageSpoofer, appUnblocker will be used to bypass unknown developer setting)
-- [x] Fix binary crash (runs chmod on app before running to make sure app launches)
-- [x] Remove app frameworks
-- [ ] Change the bundle ID of packageSpoofer itself each time it is run
-- [x] GUI edition
-- [ ] Automatically hide the file from appearing in Finder (only available through Finder search)
-- [ ] Sign apps with Apple Developer ID (Requires network connection)
-- [ ] Generate package IDs every time the app is run (random 4/8/12 byte generated developer/app name string)
+- Automatically make apps executable with the "Apply binary fix" patch
+- Remove frameworks through the app (Beta)
+- Change bundle IDs anytime
 
 # Compatibility
 packageSpoofer GUI edition is able to run on devices with **macOS 14.6 or newer**. The CLI edition can run on devices with **macOS 10.13 or newer and requires an xterm-compatible terminal**.

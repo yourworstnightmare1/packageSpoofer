@@ -121,17 +121,3 @@ read -p "Press any key to exit packageSpoofer..."
 ###################
 
 exit 1
-
-
-
-
-
-
-
-# Known Issues:
-# [2, v1.1b] Framework patch is broken
-# [3, v1.1b] Binary patch is broken
-# [4, v1.1b] Text in the exploit start displays its escape code instead of displaying the text in color
-
-# Required Actions:
-# Port to GUI using Xcode
