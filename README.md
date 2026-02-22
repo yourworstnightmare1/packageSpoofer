@@ -15,3 +15,9 @@ packageSpoofer uses `plutil` to modify the contents of the app's `Info.plist` to
 
 # Compatibility
 packageSpoofer GUI edition is able to run on devices with **macOS 14.6 or newer**. The CLI edition can run on devices with **macOS 10.13 or newer and requires an xterm-compatible terminal**.
+
+### Note about App Store apps
+It is impossible to sign applications installed from the App Store without an Xcode identity, which is not possible without Xcode (which requires admin), and installing it will likely not be possible for the target audience of this tool. Most App Store apps are DRM protected (even the free apps) and all App Store apps are all cryptographically locked, using a sealed code directory and hardened by macOS System Integrity Protection (SIP). Basically you're never signing App Store apps with a local signature, at least without Xcode. There will be no plans to support App Store apps or any plans to try to circumvent DRM or other security measures by Apple or third-parties.
+
+## Note about apps installed externally
+When downloading a file from AirDrop or another website or server, the app will likely lose its execution ability when it is installed, making it crash when trying to launch/showing an "access denied" message in the command line. To fix this, make sure to enable "Apply binary patches" in the app. If you need to manually do this, run `chmod +x` on your app executable (ex: `chmod +x ~/Downloads/Steam.app/MacOS/Steam`).
