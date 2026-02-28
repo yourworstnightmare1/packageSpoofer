@@ -1,6 +1,9 @@
 <p align="center">
 <img width="500" height="500" alt="packagespoofer_icn_512x512-removebg-preview" src="https://github.com/user-attachments/assets/1414280b-3ede-41be-aa02-d2c9b619212e" />
 </p>
+<p align="center">
+  ![GitHub Downloads](https://img.shields.io/github/downloads/yourworstnightmare1/packageSpoofer/all.svg)
+</p>
 
 # packageSpoofer
 packageSpoofer allows you to edit an application's `CFBundleIdentifier` and resign it to force it to run regardless of a provision profile restricting the app from opening.
