@@ -61,7 +61,7 @@ read -p "Press any key to confirm and proceed..." -n1 -s
 echo ""
 echo -e "${BOLD}Starting...${NC}"
 echo -e "///////////////////////////////////"
-echo -e "//////  packageSpoofer 1.1b  //////"
+echo -e "//////  packageSpoofer 1.1   //////"
 echo -e "//////      Developed by     //////"
 echo -e "//////  yourworstnightmare1  //////"
 echo -e "///////////////////////////////////"
