@@ -14,6 +14,10 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
         }
     }
 
+    func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
+        true
+    }
+
     private func applyAppMenuTitle() {
         NSApp.mainMenu?.items.first?.title = appMenuTitle
     }

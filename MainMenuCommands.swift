@@ -1,7 +1,6 @@
 import SwiftUI
 
 struct MainMenuCommands: Commands {
-    @Bindable var patchOptions: PatchOptions
     @Environment(\.openWindow) private var openWindow
 
     var body: some Commands {
@@ -12,24 +11,33 @@ struct MainMenuCommands: Commands {
             .keyboardShortcut("n", modifiers: [.command, .shift])
         }
 
-        CommandMenu("Pre-Patch") {
-            Toggle("Remove Frameworks", isOn: $patchOptions.removeFrameworks)
-            Toggle("Apply Binary Fix", isOn: $patchOptions.applyBinaryFix)
-        }
-
-        CommandMenu("Post-Patch") {
-            Toggle("Apply appUnblocker", isOn: $patchOptions.applyAppUnblocker)
-            Toggle("Hide File After Signing", isOn: $patchOptions.hideFileAfterSigning)
-        }
-
         CommandGroup(replacing: .appInfo) {
             Button("About packageSpoofer") {
                 NSApp.activate(ignoringOtherApps: true)
                 openWindow(id: "about")
             }
 
-            Button("Launch CLI") {
-                CLILauncher.launch()
+            Button("Settings…") {
+                NSApp.activate(ignoringOtherApps: true)
+                openWindow(id: "settings")
+            }
+            .keyboardShortcut(",", modifiers: [.command])
+
+            Menu("Launch CLI") {
+                Button("Launch CLI in Terminal") {
+                    CLILauncher.launchInTerminal()
+                }
+
+                Button("Launch CLI in Embedded Shell") {
+                    NSApp.activate(ignoringOtherApps: true)
+                    openWindow(id: "embedded-shell")
+                }
+
+                Divider()
+
+                Button("Reveal Script in Finder") {
+                    CLILauncher.revealScriptInFinder()
+                }
             }
         }
     }

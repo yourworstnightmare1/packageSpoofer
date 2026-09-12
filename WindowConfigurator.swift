@@ -1,82 +1,89 @@
 import AppKit
 import SwiftUI
 
-/// Configures the hosting `NSWindow` (fullscreen, resize limits, optional quit-on-close).
+/// Configures the hosting `NSWindow` (fullscreen, resize limits).
 struct WindowConfigurator: NSViewRepresentable {
-    var quitOnClose = false
     var disableMinimize = false
     var disableZoom = true
-    /// When true, locks the window to its content size on first layout (no growing or shrinking).
+    /// When true, keeps the window sized to its content and not user-resizable.
     var lockToContentSize = false
+    /// When true, allows the green zoom button / fullscreen.
+    var allowFullScreen = false
+    /// When true, keeps `.resizable` on the window (ignored if `lockToContentSize` is true).
+    var allowResize = false
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(quitOnClose: quitOnClose)
+        Coordinator()
     }
 
     func makeNSView(context: Context) -> NSView {
         let view = NSView(frame: .zero)
-        DispatchQueue.main.async {
-            if let window = view.window {
-                configure(window: window, coordinator: context.coordinator)
-            }
-        }
+        context.coordinator.scheduleConfigure(for: view, representable: self)
         return view
     }
 
     func updateNSView(_ nsView: NSView, context: Context) {
-        DispatchQueue.main.async {
-            if let window = nsView.window {
-                configure(window: window, coordinator: context.coordinator)
-            }
-        }
-    }
-
-    private func configure(window: NSWindow, coordinator: Coordinator) {
-        window.collectionBehavior.remove(.fullScreenPrimary)
-        window.collectionBehavior.remove(.fullScreenAuxiliary)
-
-        if disableZoom {
-            window.standardWindowButton(.zoomButton)?.isEnabled = false
-        }
-        if disableMinimize {
-            window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
-        }
-
-        if lockToContentSize, !coordinator.didLockSize {
-            window.contentView?.layoutSubtreeIfNeeded()
-            let contentSize = window.contentLayoutRect.size
-            guard contentSize.width > 0, contentSize.height > 0 else { return }
-
-            let frameSize = window.frameRect(forContentRect: NSRect(origin: .zero, size: contentSize)).size
-            window.setContentSize(contentSize)
-            window.minSize = frameSize
-            window.maxSize = frameSize
-            window.styleMask.remove(.resizable)
-            coordinator.didLockSize = true
-        }
-
-        if quitOnClose {
-            coordinator.observeClose(on: window)
-        }
+        context.coordinator.scheduleConfigure(for: nsView, representable: self)
     }
 
     final class Coordinator {
-        let quitOnClose: Bool
-        var didLockSize = false
-        private var closeObserver: NSObjectProtocol?
+        private var configureScheduled = false
 
-        init(quitOnClose: Bool) {
-            self.quitOnClose = quitOnClose
+        func scheduleConfigure(for view: NSView, representable: WindowConfigurator) {
+            guard !configureScheduled else { return }
+            configureScheduled = true
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                self.configureScheduled = false
+                guard let window = view.window else { return }
+                self.configure(window: window, representable: representable)
+            }
         }
 
-        func observeClose(on window: NSWindow) {
-            guard quitOnClose, closeObserver == nil else { return }
-            closeObserver = NotificationCenter.default.addObserver(
-                forName: NSWindow.willCloseNotification,
-                object: window,
-                queue: .main
-            ) { _ in
-                NSApp.terminate(nil)
+        private func configure(window: NSWindow, representable: WindowConfigurator) {
+            if representable.allowFullScreen {
+                window.collectionBehavior.remove(.fullScreenNone)
+                window.collectionBehavior.insert(.fullScreenPrimary)
+            } else {
+                window.collectionBehavior.remove(.fullScreenPrimary)
+                window.collectionBehavior.remove(.fullScreenAuxiliary)
+                window.collectionBehavior.insert(.fullScreenNone)
+            }
+
+            if representable.disableZoom {
+                window.standardWindowButton(.zoomButton)?.isEnabled = false
+            } else {
+                window.standardWindowButton(.zoomButton)?.isEnabled = true
+            }
+            if representable.disableMinimize {
+                window.standardWindowButton(.miniaturizeButton)?.isEnabled = false
+            }
+
+            if representable.lockToContentSize {
+                window.styleMask.remove(.resizable)
+                window.contentView?.layoutSubtreeIfNeeded()
+
+                let contentSize = window.contentLayoutRect.size
+                guard contentSize.width > 1, contentSize.height > 1 else { return }
+
+                let current = window.contentLayoutRect.size
+                if abs(current.width - contentSize.width) > 0.5
+                    || abs(current.height - contentSize.height) > 0.5 {
+                    window.setContentSize(contentSize)
+                }
+
+                let frameSize = window.frameRect(forContentRect: NSRect(origin: .zero, size: contentSize)).size
+                if window.minSize != frameSize || window.maxSize != frameSize {
+                    window.minSize = frameSize
+                    window.maxSize = frameSize
+                }
+                return
+            }
+
+            if representable.allowResize {
+                window.styleMask.insert(.resizable)
+                window.minSize = NSSize(width: 480, height: 280)
+                window.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
             }
         }
     }

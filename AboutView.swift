@@ -47,7 +47,7 @@ private func appName() -> String {
 }
 
 private func versionString() -> String {
-    let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "2.0"
+    let short = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "3.0.1"
     let build = Bundle.main.infoDictionary?["CFBundleVersion"] as? String ?? ""
     let versionLabel = short.hasPrefix("v") ? short : "v\(short)"
     guard !build.isEmpty else { return versionLabel }

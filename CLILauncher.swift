@@ -3,23 +3,65 @@ import Foundation
 
 enum CLILauncher {
     @MainActor
-    static func launch() {
+    static func launchInTerminal() {
         guard let scriptURL = resolveCLIURL() else {
             presentMissingCLIAlert()
             return
         }
 
         do {
-            try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: scriptURL.path)
-            let launcherURL = try makeCommandLauncher(for: scriptURL)
+            let runnable = try prepareRunnableScript(from: scriptURL)
+            let launcherURL = try makeCommandLauncher(for: runnable)
 
             let process = Process()
             process.executableURL = URL(fileURLWithPath: "/usr/bin/open")
             process.arguments = ["-a", "Terminal", launcherURL.path]
             try process.run()
+            TerminalLogCleaner.scheduleCleanupAfterCLILaunch()
         } catch {
             presentLaunchFailedAlert(message: error.localizedDescription)
         }
+    }
+
+    @MainActor
+    static func revealScriptInFinder() {
+        guard let scriptURL = resolveCLIURL() else {
+            presentMissingCLIAlert()
+            return
+        }
+        NSWorkspace.shared.activateFileViewerSelecting([scriptURL])
+    }
+
+    /// Prefer the bundled `cli.sh`, then fall back to the project-adjacent copy.
+    static func resolveCLIURL() -> URL? {
+        if let bundled = Bundle.main.url(forResource: "cli", withExtension: "sh") {
+            return bundled
+        }
+        if let resourceURL = Bundle.main.resourceURL?.appendingPathComponent("cli.sh"),
+           FileManager.default.fileExists(atPath: resourceURL.path) {
+            return resourceURL
+        }
+
+        let sourceAdjacent = URL(fileURLWithPath: #filePath)
+            .deletingLastPathComponent()
+            .appendingPathComponent("cli.sh")
+        if FileManager.default.fileExists(atPath: sourceAdjacent.path) {
+            return sourceAdjacent
+        }
+
+        return nil
+    }
+
+    /// Copies `cli.sh` to a writable temp path and ensures it is executable.
+    static func prepareRunnableScript(from scriptURL: URL) throws -> URL {
+        let fm = FileManager.default
+        let runnable = fm.temporaryDirectory.appendingPathComponent("packageSpoofer-cli.sh")
+        if fm.fileExists(atPath: runnable.path) {
+            try fm.removeItem(at: runnable)
+        }
+        try fm.copyItem(at: scriptURL, to: runnable)
+        try fm.setAttributes([.posixPermissions: 0o755], ofItemAtPath: runnable.path)
+        return runnable
     }
 
     private static func makeCommandLauncher(for scriptURL: URL) throws -> URL {
@@ -37,23 +79,8 @@ enum CLILauncher {
         return launcherURL
     }
 
-    private static func resolveCLIURL() -> URL? {
-        if let bundled = Bundle.main.url(forResource: "cli", withExtension: "sh") {
-            return bundled
-        }
-
-        let sourceAdjacent = URL(fileURLWithPath: #filePath)
-            .deletingLastPathComponent()
-            .appendingPathComponent("cli.sh")
-        if FileManager.default.fileExists(atPath: sourceAdjacent.path) {
-            return sourceAdjacent
-        }
-
-        return nil
-    }
-
     @MainActor
-    private static func presentMissingCLIAlert() {
+    static func presentMissingCLIAlert() {
         let alert = NSAlert()
         alert.alertStyle = .warning
         alert.messageText = "Could not find cli.sh."

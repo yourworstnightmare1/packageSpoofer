@@ -1,0 +1,5 @@
+DerivedData/
+.DS_Store
+dist/
+*.xcuserstate
+packagespoofer.xcodeproj/

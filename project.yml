@@ -1,0 +1,61 @@
+name: packagespoofer
+options:
+  bundleIdPrefix: com.yourworstnightmare1
+  deploymentTarget:
+    macOS: "14.6"
+  createIntermediateGroups: true
+settings:
+  MARKETING_VERSION: "3.0.1"
+  CURRENT_PROJECT_VERSION: "1"
+targets:
+  packagespoofer:
+    type: application
+    platform: macOS
+    sources:
+      - AboutView.swift
+      - AppBundleResolver.swift
+      - AppCategory.swift
+      - AppDelegate.swift
+      - AppNotifications.swift
+      - AppSettings.swift
+      - AppUnblocker.swift
+      - AppWritableCheck.swift
+      - CLILauncher.swift
+      - ContentView.swift
+      - EmbeddedShellANSI.swift
+      - EmbeddedShellSession.swift
+      - EmbeddedShellView.swift
+      - MainMenuCommands.swift
+      - PatchOptions.swift
+      - SelectedAppAccess.swift
+      - SettingsView.swift
+      - TerminalLogCleaner.swift
+      - WindowConfigurator.swift
+      - WordlistEditorView.swift
+      - packagespooferApp.swift
+    postCompileScripts:
+      - name: Copy Resources
+        basedOnDependencyAnalysis: false
+        script: |
+          set -euo pipefail
+          RESOURCES_DIR="${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}"
+          mkdir -p "${RESOURCES_DIR}"
+          cp -f "${SRCROOT}/cli.sh" "${RESOURCES_DIR}/cli.sh"
+          chmod 755 "${RESOURCES_DIR}/cli.sh"
+          cp -f "${SRCROOT}/AppIcon.icns" "${RESOURCES_DIR}/AppIcon.icns"
+    settings:
+      PRODUCT_NAME: packageSpoofer
+      PRODUCT_BUNDLE_IDENTIFIER: com.yourworstnightmare1.packagespoofer
+      GENERATE_INFOPLIST_FILE: YES
+      INFOPLIST_FILE: Info.plist
+      INFOPLIST_KEY_CFBundleDisplayName: packageSpoofer
+      INFOPLIST_KEY_CFBundleName: packageSpoofer
+      INFOPLIST_KEY_LSApplicationCategoryType: public.app-category.utilities
+      INFOPLIST_KEY_NSHumanReadableCopyright: "Copyright © 2026 yourworstnightmare1. All rights reserved."
+      INFOPLIST_KEY_NSHighResolutionCapable: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      CODE_SIGN_STYLE: Automatic
+      CODE_SIGN_IDENTITY: "-"
+      ENABLE_HARDENED_RUNTIME: YES
+      SWIFT_VERSION: "5.0"
+      MACOSX_DEPLOYMENT_TARGET: "14.6"
