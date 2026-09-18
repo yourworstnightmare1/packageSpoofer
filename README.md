@@ -9,9 +9,17 @@ packageSpoofer allows you to edit an application's `CFBundleIdentifier` and resi
 packageSpoofer uses `plutil` to modify the contents of the app's `Info.plist` to change the app's `CFBundleIdentifier`, as most provision profiles use the app's package name to block it from opening. Then once the package name is changed, we use `codesign` to resign the app with the new package name to allow macOS to launch the app.
 
 # Features
-- Automatically make apps executable with the "Apply binary fix" patch
-- Remove frameworks through the app (Beta)
-- Change bundle IDs anytime
+- **Bundle ID spoofing**: Changes app's reported bundle ID to bypass app blocks
+- **App category spoofing**: Changes app's App Store category ID to make apps even more undetectable to blocks
+- **[appUnblocker](https://github.com/yourworstnightmare1/appunblocker) integration**: Force opens apps that have unsigned developer IDs/local signatures using folder manipulation
+- **Embedded Shell**: Use the CLI version without Terminal by using the Embedded Shell, which runs a shell inside of an app
+- **Make Executable**: Fix apps crashing on launch by applying chmod to fix executable files
+- **Bypass Gatekeeper**: Applies gatekeeper bypass on app to allow it to open even if reported as unsafe
+- **Hide File After Signing**: Hides app after packageSpoofer finishes all patches
+- **Bundle ID generation**: Randomly generate bundle IDs following proper macOS bundle ID conventions with one click
+- **Force Metal HUD on app**: Makes app open with the Metal HUD, with system and performance info (won't work on all apps)
+
+
 
 # Compatibility
 packageSpoofer GUI edition is able to run on devices with **macOS 14.6 or newer**. The CLI edition can run on devices with **macOS 10.13 or newer and requires an xterm-compatible terminal**.
